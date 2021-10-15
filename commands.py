@@ -1,6 +1,8 @@
 from os import fsdecode
 import re
 from aiogram import types
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from bot import *
 from data import *
 
@@ -70,9 +72,6 @@ async def key_indices_today(message):
 
 
 ## OFFLINE DATA
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-
 
 ##### get_license_by_ogrn START 
 # in case I will need many states to store
