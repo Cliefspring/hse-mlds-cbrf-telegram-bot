@@ -86,6 +86,7 @@ async def get_user_ogrn(message):
 async def get_license_by_ogrn(message : types.Message, state: FSMContext):
     if len(message.text) == 13 and re.match(r'\d{13}', message.text):
         await message.reply(OfflineData(message.text).get_license_by_ogrn())
+        await state.finish()
     else:
         await message.reply(f"ОГРН {message.text} некорректный. ОГРН состоит из 13 цифр, стоящих друг за другом подряд.\
             Например, 1234566543219")
@@ -113,6 +114,7 @@ async def get_user_org_name(message):
 
 async def get_license_by_name(message : types.Message, state: FSMContext):
     await message.reply(OfflineData(message.text).get_license_by_name())
+    await state.finish()
 
 dp.register_message_handler(get_user_org_name, commands="get_license_by_name")
 dp.register_message_handler(get_license_by_name, state = WaitForNAME.waiting_for_name)
@@ -131,6 +133,7 @@ async def get_date_for_metals(message):
 
 async def metals_at(message : types.Message, state: FSMContext):
     await message.reply(OfflineData(message.text).metals_at())
+    await state.finish()
 
 dp.register_message_handler(get_date_for_metals, commands="metals_at")
 dp.register_message_handler(metals_at, state = WaitForDate.waiting_for_date)
@@ -148,6 +151,7 @@ async def get_date_for_inflation(message):
 
 async def inflation_at(message : types.Message, state: FSMContext):
     await message.reply(OfflineData(message.text).inflation_at())
+    await state.finish()
 
 dp.register_message_handler(get_date_for_inflation, commands="inflation_at")
 dp.register_message_handler(inflation_at, state = WaitForDate2.waiting_for_date)
@@ -167,6 +171,7 @@ async def get_date_for_keyrate(message):
 
 async def keyrate_at(message : types.Message, state: FSMContext):
     await message.reply(OfflineData(message.text).keyrate_at())
+    await state.finish()
 
 dp.register_message_handler(get_date_for_keyrate, commands="keyrate_at")
 dp.register_message_handler(keyrate_at, state = WaitForDate3.waiting_for_date)

@@ -154,7 +154,7 @@ class OfflineData:
             return f'Дата {self.message} некорректного формата. Попробуйте, например, такую: 02.10.2021'
 
     def keyrate_at(self):
-        keyrate = pd.read_csv('./data/KEY_RATE.CSV', sep=';')
+        keyrate = pd.read_csv('./data/KEY_RATE.csv', sep=';')
         if re.fullmatch(r'\d{2}.\d{2}.\d{4}', self.message):
             keyrate_at_date = keyrate[keyrate['date'] == self.message]
             if keyrate_at_date.shape[0] == 0:
