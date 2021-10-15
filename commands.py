@@ -18,6 +18,15 @@ async def set_default_commands(dp):
     )
 
 
+@dp.message_handler(state='*', commands=['cancel'])
+@dp.message_handler(lambda message: message.text.lower() == 'cancel', state='*')
+async def cancel(message: types.Message, state: FSMContext):
+    # Cancel state and inform user about it
+    await state.finish()
+    # And remove keyboard (just in case)
+    await message.reply('Запрос отменен')
+
+
 @dp.message_handler(commands=['start'])
 async def welcome_user(message):
     welcome_message = f"""
@@ -86,13 +95,7 @@ async def get_license_by_ogrn(message : types.Message, state: FSMContext):
 dp.register_message_handler(get_user_ogrn, commands="get_license_by_ogrn")
 dp.register_message_handler(get_license_by_ogrn, state = WaitForOGRN.waiting_for_ogrn)
 
-@dp.message_handler(state='*', commands=['cancel'])
-@dp.message_handler(lambda message: message.text.lower() == 'cancel', state='*')
-async def cancel(message: types.Message, state: FSMContext):
-    # Cancel state and inform user about it
-    await state.finish()
-    # And remove keyboard (just in case)
-    await message.reply('Запрос отменен')
+
 
     
 
