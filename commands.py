@@ -50,6 +50,7 @@ async def show_commands(message):
 /get_license_by_name - Узнать статус банка по его имени, а также ОГРН, номер и дату выдачи лицензии
 /metals_at - Узнать курс драгоценных металлов на определенную дату
 /inflation_at - Узнать инфляцию на определенную дату
+/keyrate_at - Узнать ключевую ставку на определенную дату
     """
     await message.answer(show_commands_message)
 
