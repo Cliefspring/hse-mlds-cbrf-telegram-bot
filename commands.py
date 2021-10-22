@@ -7,10 +7,12 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, message
 from aiogram.types import File, InputFile
+from aiogram.types.bot_command import BotCommand
 from aiogram.types.input_media import MediaGroup
 
 from bot import *
 from data import *
+from inline_buttons import *
 
 
 
@@ -21,9 +23,18 @@ async def set_default_commands(dp):
             types.BotCommand("start", "Запустить бота"), 
             types.BotCommand('currency_today', 'Курс валют на сегодня'),
             types.BotCommand('metals_today', 'Курс драг. металлов на сегодня'),
-            types.BotCommand('key_indices_today', 'Инфляция план/факт и ключевая ставка')
+            types.BotCommand('key_indices_today', 'Инфляция план/факт и ключевая ставка'),
+            types.BotCommand('get_license_by_ogrn', 'Узнать статус банка по ОГРН, а также номер и дату выдачи лицензии'),
+            types.BotCommand('get_license_by_name',' Узнать статус банка по его имени, а также ОГРН, номер и дату выдачи лицензии'),
+            types.BotCommand('metals_at', 'Узнать курс драгоценных металлов на определенную дату'),
+            types.BotCommand('inflation_at', 'Узнать инфляцию на определенную дату'),
+            types.BotCommand('keyrate_at', 'Узнать ключевую ставку на определенную дату'),
+            types.BotCommand('inflation_graph', 'Посмотреть график инфляции за год по месяцам (есть кнопки выбора)'),
+            types.BotCommand('currency_graph', 'Посмотреть график курсов основных валют за год по дням (есть кнопки выбора)'),
+            types.BotCommand('metals_graph', 'Посмотреть график курсов драгоценных за год по дням (есть кнопки выбора)')
         ]
     )
+
 
 
 @dp.message_handler(state='*', commands=['cancel'])
@@ -57,6 +68,9 @@ async def show_commands(message):
 /metals_at - Узнать курс драгоценных металлов на определенную дату
 /inflation_at - Узнать инфляцию на определенную дату
 /keyrate_at - Узнать ключевую ставку на определенную дату
+/inflation_graph - Посмотреть график инфляции за год по месяцам (есть кнопки выбора)
+/currency_graph - Посмотреть график курсов основных валют за год по дням (есть кнопки выбора)
+/metals_graph - Посмотреть график курсов драгоценных за год по дням (есть кнопки выбора)
     """
     await message.answer(show_commands_message)
 
@@ -186,59 +200,11 @@ dp.register_message_handler(keyrate_at, state = WaitForDate3.waiting_for_date)
 
 
 ##### inflation_graph
-inflation_markup = InlineKeyboardMarkup(
-    one_time_keyboard=True # to hide buttons after pressing the button
-    )
-
-inflation_buttons = [
-    InlineKeyboardButton(text='1992', callback_data='inflation_1992'),
-    InlineKeyboardButton(text='1993', callback_data='inflation_1993'),
-    InlineKeyboardButton(text='1994', callback_data='inflation_1994'),
-    InlineKeyboardButton(text='1995', callback_data='inflation_1995'),
-    InlineKeyboardButton(text='1996', callback_data='inflation_1996'),
-    InlineKeyboardButton(text='1997', callback_data='inflation_1997'),
-    InlineKeyboardButton(text='1998', callback_data='inflation_1998'),
-    InlineKeyboardButton(text='1999', callback_data='inflation_1999'),
-    InlineKeyboardButton(text='2000', callback_data='inflation_2000'),
-    InlineKeyboardButton(text='2001', callback_data='inflation_2001'),
-    InlineKeyboardButton(text='2002', callback_data='inflation_2002'),
-    InlineKeyboardButton(text='2003', callback_data='inflation_2003'),
-    InlineKeyboardButton(text='2004', callback_data='inflation_2004'),
-    InlineKeyboardButton(text='2005', callback_data='inflation_2005'),
-    InlineKeyboardButton(text='2006', callback_data='inflation_2006'),
-    InlineKeyboardButton(text='2007', callback_data='inflation_2007'),
-    InlineKeyboardButton(text='2008', callback_data='inflation_2008'),
-    InlineKeyboardButton(text='2009', callback_data='inflation_2009'),
-    InlineKeyboardButton(text='2010', callback_data='inflation_2010'),
-    InlineKeyboardButton(text='2011', callback_data='inflation_2011'),
-    InlineKeyboardButton(text='2012', callback_data='inflation_2012'),
-    InlineKeyboardButton(text='2013', callback_data='inflation_2013'),
-    InlineKeyboardButton(text='2014', callback_data='inflation_2014'),
-    InlineKeyboardButton(text='2015', callback_data='inflation_2015'),
-    InlineKeyboardButton(text='2016', callback_data='inflation_2016'),
-    InlineKeyboardButton(text='2017', callback_data='inflation_2017'),
-    InlineKeyboardButton(text='2018', callback_data='inflation_2018'),
-    InlineKeyboardButton(text='2019', callback_data='inflation_2019'),
-    InlineKeyboardButton(text='2020', callback_data='inflation_2020'),
-    InlineKeyboardButton(text='2021', callback_data='inflation_2021'),    
-]
-inflation_markup.add(*inflation_buttons)
-
-
 @dp.message_handler(commands=['inflation_graph'])
 async def inflation_at(message : types.Message):
     await message.reply("Выбери год, на который хочешь посмотреть график:", 
     reply_markup=inflation_markup)
 
-
-
-years_inflation = ['inflation_1992', 'inflation_1993', 'inflation_1994', 'inflation_1995',
- 'inflation_1996', 'inflation_1997', 'inflation_1998', 'inflation_1999', 'inflation_2000',
-  'inflation_2001', 'inflation_2002', 'inflation_2003', 'inflation_2004', 'inflation_2005', 
-  'inflation_2006', 'inflation_2007', 'inflation_2008', 'inflation_2009', 'inflation_2010',
-   'inflation_2011', 'inflation_2012', 'inflation_2013', 'inflation_2014', 'inflation_2015',
-    'inflation_2016', 'inflation_2017', 'inflation_2018', 'inflation_2019', 'inflation_2020',
-     'inflation_2021']
 
 @dp.message_handler(filters.CommandStart())
 @dp.callback_query_handler(text=years_inflation)
@@ -333,10 +299,143 @@ async def send_inflation_graph(call: types.CallbackQuery):
     if call.data == 'inflation_2021':
             photo = InputFile("graphs/inflation_2021.png")
             await bot.send_photo(call.from_user.id, photo=photo)
-    
+#####
 
-  
 
 
 
 #####
+##### currency_graph
+@dp.message_handler(commands=['currency_graph'])
+async def currency_at(message : types.Message):
+    await message.reply("Выбери год, на который хочешь посмотреть график:", 
+    reply_markup=currency_markup)
+
+
+@dp.message_handler(filters.CommandStart())
+@dp.callback_query_handler(text=years_currency)
+async def send_currency_graph(call: types.CallbackQuery):
+    if call.data == 'currency_1999':
+        photo = InputFile("graphs/currency_1999.png")
+        await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2000':
+            photo = InputFile("graphs/currency_2000.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2001':
+            photo = InputFile("graphs/currency_2001.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2002':
+            photo = InputFile("graphs/currency_2002.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2003':
+            photo = InputFile("graphs/currency_2003.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2004':
+            photo = InputFile("graphs/currency_2004.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2005':
+            photo = InputFile("graphs/currency_2005.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2006':
+            photo = InputFile("graphs/currency_2006.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2007':
+            photo = InputFile("graphs/currency_2007.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2008':
+            photo = InputFile("graphs/currency_2008.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2009':
+            photo = InputFile("graphs/currency_2009.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2010':
+            photo = InputFile("graphs/currency_2010.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2011':
+            photo = InputFile("graphs/currency_2011.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2012':
+            photo = InputFile("graphs/currency_2012.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2013':
+            photo = InputFile("graphs/currency_2013.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2014':
+            photo = InputFile("graphs/currency_2014.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2015':
+            photo = InputFile("graphs/currency_2015.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2016':
+            photo = InputFile("graphs/currency_2016.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2017':
+            photo = InputFile("graphs/currency_2017.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2018':
+            photo = InputFile("graphs/currency_2018.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2019':
+            photo = InputFile("graphs/currency_2019.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2020':
+            photo = InputFile("graphs/currency_2020.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'currency_2021':
+            photo = InputFile("graphs/currency_2021.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+
+
+#####
+##### metals_graph
+@dp.message_handler(commands=['metals_graph'])
+async def metals_at(message : types.Message):
+    await message.reply("Выбери год, на который хочешь посмотреть график:", 
+    reply_markup=metals_markup)
+
+
+@dp.message_handler(filters.CommandStart())
+@dp.callback_query_handler(text=years_metals)
+async def send_metals_graph(call: types.CallbackQuery):
+    if call.data == 'metals_2008':
+        photo = InputFile("graphs/dragmetals_2008.png")
+        await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2009':
+            photo = InputFile("graphs/dragmetals_2009.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2010':
+            photo = InputFile("graphs/dragmetals_2010.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2011':
+            photo = InputFile("graphs/dragmetals_2011.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2012':
+            photo = InputFile("graphs/dragmetals_2012.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2013':
+            photo = InputFile("graphs/dragmetals_2013.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2014':
+            photo = InputFile("graphs/dragmetals_2014.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2015':
+            photo = InputFile("graphs/dragmetals_2015.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2016':
+            photo = InputFile("graphs/dragmetals_2016.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2017':
+            photo = InputFile("graphs/dragmetals_2017.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2018':
+            photo = InputFile("graphs/dragmetals_2018.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2019':
+            photo = InputFile("graphs/dragmetals_2019.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2020':
+            photo = InputFile("graphs/dragmetals_2020.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
+    if call.data == 'metals_2021':
+            photo = InputFile("graphs/dragmetals_2021.png")
+            await bot.send_photo(call.from_user.id, photo=photo)
