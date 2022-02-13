@@ -11,7 +11,8 @@ from aiogram.types.bot_command import BotCommand
 from aiogram.types.input_media import MediaGroup
 
 from bot import *
-from data import *
+from online_data import *
+from offline_data import *
 from inline_buttons import *
 
 
@@ -75,24 +76,24 @@ async def show_commands(message):
     await message.answer(show_commands_message)
 
 
-### ONLINE DATA
+### OnlineCommands
 @dp.message_handler(commands=['currency_today'])
 async def currency_today(message : types.Message):
     #print(message)
-    await message.reply(OnlineData.currency_today())
+    await message.reply(OnlineCommands.currency_today())
 
 @dp.message_handler(commands=['metals_today'])
 async def metals_today(message):
-    await message.reply(OnlineData.metals_today())
+    await message.reply(OnlineCommands.metals_today())
 
 
 @dp.message_handler(commands=['key_indices_today'])
 async def key_indices_today(message):
-    await message.reply(OnlineData.key_indices_today())
+    await message.reply(OnlineCommands.key_indices_today())
 
 
 
-## OFFLINE DATA
+## OfflineCommands
 
 ##### get_license_by_ogrn START 
 # in case I will need many states to store
@@ -106,7 +107,7 @@ async def get_user_ogrn(message):
 
 async def get_license_by_ogrn(message : types.Message, state: FSMContext):
     if len(message.text) == 13 and re.match(r'\d{13}', message.text):
-        await message.reply(OfflineData(message.text).get_license_by_ogrn())
+        await message.reply(OfflineCommands(message.text).get_license_by_ogrn())
         await state.finish()
     else:
         await message.reply(f"ОГРН {message.text} некорректный. ОГРН состоит из 13 цифр, стоящих друг за другом подряд.\
@@ -134,7 +135,7 @@ async def get_user_org_name(message):
     await WaitForNAME.waiting_for_name.set()
 
 async def get_license_by_name(message : types.Message, state: FSMContext):
-    await message.reply(OfflineData(message.text).get_license_by_name())
+    await message.reply(OfflineCommands(message.text).get_license_by_name())
     await state.finish()
 
 dp.register_message_handler(get_user_org_name, commands="get_license_by_name")
@@ -153,7 +154,7 @@ async def get_date_for_metals(message):
     await WaitForDate.waiting_for_date.set()
 
 async def metals_at(message : types.Message, state: FSMContext):
-    await message.reply(OfflineData(message.text).metals_at())
+    await message.reply(OfflineCommands(message.text).metals_at())
     await state.finish()
 
 dp.register_message_handler(get_date_for_metals, commands="metals_at")
@@ -171,7 +172,7 @@ async def get_date_for_inflation(message):
     await WaitForDate2.waiting_for_date.set()
 
 async def inflation_at(message : types.Message, state: FSMContext):
-    await message.reply(OfflineData(message.text).inflation_at())
+    await message.reply(OfflineCommands(message.text).inflation_at())
     await state.finish()
 
 dp.register_message_handler(get_date_for_inflation, commands="inflation_at")
@@ -191,7 +192,7 @@ async def get_date_for_keyrate(message):
     await WaitForDate3.waiting_for_date.set()
 
 async def keyrate_at(message : types.Message, state: FSMContext):
-    await message.reply(OfflineData(message.text).keyrate_at())
+    await message.reply(OfflineCommands(message.text).keyrate_at())
     await state.finish()
 
 dp.register_message_handler(get_date_for_keyrate, commands="keyrate_at")
