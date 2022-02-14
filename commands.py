@@ -11,27 +11,29 @@ from aiogram.types.bot_command import BotCommand
 from aiogram.types.input_media import MediaGroup
 
 from bot import *
-from online_data import *
-from offline_data import *
+from online_commands import *
+from offline_commands import *
 from inline_buttons import *
 
+commands_names_descriptions = {
+             "start": "Запустить бота", 
+             'currency_today': 'Курс валют на сегодня',
+             'metals_today': 'Курс драг. металлов на сегодня',
+             'key_indices_today': 'Инфляция план/факт и ключевая ставка',
+             'get_license_by_ogrn': 'Узнать статус банка по ОГРН, а также номер и дату выдачи лицензии',
+             'get_license_by_name':' Узнать статус банка по его имени, а также ОГРН, номер и дату выдачи лицензии',
+             'metals_at': 'Узнать курс драгоценных металлов на определенную дату',
+             'inflation_at': 'Узнать инфляцию на определенную дату',
+             'keyrate_at': 'Узнать ключевую ставку на определенную дату',
+             'inflation_graph': 'Посмотреть график инфляции за год по месяцам (есть кнопки выбора)',
+             'currency_graph': 'Посмотреть график курсов основных валют за год по дням (есть кнопки выбора)',
+             'metals_graph': 'Посмотреть график курсов драгоценных за год по дням (есть кнопки выбора)'
+            }
 
 async def set_default_commands(dp):
     await dp.bot.set_my_commands(
         [
-            # command name and description
-            types.BotCommand("start", "Запустить бота"), 
-            types.BotCommand('currency_today', 'Курс валют на сегодня'),
-            types.BotCommand('metals_today', 'Курс драг. металлов на сегодня'),
-            types.BotCommand('key_indices_today', 'Инфляция план/факт и ключевая ставка'),
-            types.BotCommand('get_license_by_ogrn', 'Узнать статус банка по ОГРН, а также номер и дату выдачи лицензии'),
-            types.BotCommand('get_license_by_name',' Узнать статус банка по его имени, а также ОГРН, номер и дату выдачи лицензии'),
-            types.BotCommand('metals_at', 'Узнать курс драгоценных металлов на определенную дату'),
-            types.BotCommand('inflation_at', 'Узнать инфляцию на определенную дату'),
-            types.BotCommand('keyrate_at', 'Узнать ключевую ставку на определенную дату'),
-            types.BotCommand('inflation_graph', 'Посмотреть график инфляции за год по месяцам (есть кнопки выбора)'),
-            types.BotCommand('currency_graph', 'Посмотреть график курсов основных валют за год по дням (есть кнопки выбора)'),
-            types.BotCommand('metals_graph', 'Посмотреть график курсов драгоценных за год по дням (есть кнопки выбора)')
+           types.BotCommand(name, descr) for name, descr in commands_names_descriptions.items() 
         ]
     )
 
@@ -56,22 +58,12 @@ async def welcome_user(message):
 Посмотреть все мои комманды /show_commands"""
     await message.reply(welcome_message)
 
+show_commands_message = f"""Посмотри, что я умею:\n"""
+for name, descr in commands_names_descriptions.items():
+    show_commands_message += f"""/{name} - {descr}\n"""
 
 @dp.message_handler(commands=['show_commands'])
 async def show_commands(message):
-    show_commands_message = """Посмотри, что я умею:\n
-/currency_today - Курс основных валют на сегодня
-/metals_today - Курс драгоценных металлов на сегодня
-/key_indices_today - Цель по инфляции, актуальная инфляция, ключевая ставка ЦБ
-/get_license_by_ogrn - Узнать статус банка по ОГРН, а также номер и дату выдачи лицензии
-/get_license_by_name - Узнать статус банка по его имени, а также ОГРН, номер и дату выдачи лицензии
-/metals_at - Узнать курс драгоценных металлов на определенную дату
-/inflation_at - Узнать инфляцию на определенную дату
-/keyrate_at - Узнать ключевую ставку на определенную дату
-/inflation_graph - Посмотреть график инфляции за год по месяцам (есть кнопки выбора)
-/currency_graph - Посмотреть график курсов основных валют за год по дням (есть кнопки выбора)
-/metals_graph - Посмотреть график курсов драгоценных за год по дням (есть кнопки выбора)
-    """
     await message.answer(show_commands_message)
 
 
