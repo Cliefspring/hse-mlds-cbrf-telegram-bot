@@ -5,6 +5,13 @@ import xml.etree.ElementTree as ET
 from lxml import html
 import re
 
+def transform_gold(x):
+    if len(x) == 10:
+        x = str(x).replace(',', '').replace(' ', '')
+        return float(x[:4] + '.' + x[4:])
+    else:
+        return float(x)
+
 # OnlineCommands
 class OnlineCommands:
     def __init__(self, message):
@@ -39,12 +46,6 @@ class OnlineCommands:
         dragmetals_online = dragmetals_online[0]
         dragmetals_online.columns = ['Дата', 'Золото', 'Серебро', 'Платина', 'Палладий']
         today_date = datetime.datetime.now().strftime('%d.%m.%Y')
-        def transform_gold(x):
-            if len(x) == 10:
-                x = str(x).replace(',', '').replace(' ', '')
-                return float(x[:4] + '.' + x[4:])
-            else:
-                return float(x)
 
         dragmetals_online['Золото'] = dragmetals_online['Золото'].apply(transform_gold)
         dragmetals_online['Платина'] = dragmetals_online['Платина'].apply(transform_gold)
