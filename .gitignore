@@ -1,0 +1,5 @@
+env_bot/
+TOKEN.py
+*.pyc
+.ipynb_checkpoints
+__pycache__
